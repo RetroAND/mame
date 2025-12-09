@@ -13,7 +13,9 @@ namespace
 				: driver_device(mconfig, type, tag),
 				m_maincpu(*this,"maincpu"),
 				m_via1(*this,"via1"),
-				m_via2(*this,"via2")
+				m_via2(*this,"via2"),
+				m_diag_digits(*this, "digit%u", 0U),
+				m_diagnostic_leds(*this, "led%u", 5U)
 				{
 
 				}
@@ -28,15 +30,37 @@ namespace
 			required_device<w65c02s_device> m_maincpu;
 			required_device<via6522_device> m_via1;
 			required_device<via6522_device> m_via2;
+			output_finder<2> m_diag_digits;
+			output_finder<3> m_diagnostic_leds;
+
+			uint8_t diagnosticsPort = 0;
+			uint8_t hex_seven_segment[16] = {0x3f, 0x06, 0x5b, 0x4f, 0x66, 0x6d, 0x7d, 0x07, 0x7f, 0x6f, 0x77, 0x7c, 0x39, 0x5e, 0x79, 0x71};
+
+			uint8_t readDiagnosticsPort();
+			void writeDiagnosticsPort(uint8_t value);
+
 
 			void mem_map(address_map &map) ATTR_COLD;
 	};
+
+	uint8_t cr124_state::readDiagnosticsPort()
+	{
+		return this->diagnosticsPort;
+	}
+
+	void cr124_state::writeDiagnosticsPort(uint8_t value)
+	{
+		this->diagnosticsPort = value;
+		//m_diag_digits[0] = cr124_state::hex_seven_segment[value & 0x0f];
+		//m_diag_digits[1] = cr124_state::hex_seven_segment[(value >> 4) & 0x0f];
+	}
 
 	void cr124_state::mem_map(address_map &map)
 	{
 		map(0x0000, 0x03ff).ram();
 		map(0x0400, 0x040f).m(m_via1, FUNC(via6522_device::map)).mirror(0xf0);
 		map(0x0800, 0x080f).m(m_via2, FUNC(via6522_device::map)).mirror(0xf0);
+		map(0x1800, 0x7fff).rw(FUNC(cr124_state::readDiagnosticsPort),FUNC(cr124_state::writeDiagnosticsPort));
 		map(0x8000, 0xffff).rom().region("maincpu", 0);
 	}
 
@@ -54,7 +78,7 @@ namespace
 
 	void cr124_state::machine_start()
 	{
-
+		diagnosticsPort = 0;
 	}
 
 	void cr124_state::machine_reset()

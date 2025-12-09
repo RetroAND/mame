@@ -5,7 +5,7 @@
 
 namespace
 {
-	class cr124_state : driver_device
+	class cr124_state : public driver_device
 	{
 		public:
 
@@ -34,7 +34,7 @@ namespace
 			required_device<via6522_device> m_via2;
 
 			void mem_map(address_map &map) ATTR_COLD;
-	}
+	};
 
 	void cr124_state::mem_map(address_map &map)
 	{

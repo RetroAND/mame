@@ -30,8 +30,8 @@ namespace
 			required_device<w65c02s_device> m_maincpu;
 			required_memory_region m_rom;
 			required_memory_region m_ram;
-			required_device<6522via_device> m_via1;
-			required_device<6522via_device> m_via2;
+			required_device<via6522_device> m_via1;
+			required_device<via6522_device> m_via2;
 
 			void mem_map(address_map &map) ATTR_COLD;
 	}
@@ -75,8 +75,8 @@ namespace
 
 	ROM_START (cr124)
 		ROM_REGION(0x8000, "maincpu", 0)
-		ROM_LOAD("crc.bin", 0x8000, 0x0004, CRC(2d71bc67) SHA1(999f478cda5dc6b9da845ae8580789da6292fc75))
-		ROM_LOAD("bp124.bin", 0x8004, 0xfffc, CRC(2d71bc67) SHA1(999f478cda5dc6b9da845ae8580789da6292fc75))
+		ROM_LOAD("crc.bin", 0x8000, 0x0004, CRC(71855991) SHA1(89887f1afc486919c575ed44dfb6ac4125fea29c))
+		ROM_LOAD("bp124.bin", 0x8004, 0xfffc, CRC(02770453) SHA1(06d93109dd303de5e45e5cb06f3b4513265531da))
 	ROM_END
 
 }
